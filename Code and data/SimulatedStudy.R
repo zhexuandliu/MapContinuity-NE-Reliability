@@ -6,6 +6,9 @@
 library(ggplot2)
 library(viridis)
 library(neMDBD)
+library(Rfast)
+library(latex2exp)
+library(clusterSim)
 
 ########################################
 # 5GMM
@@ -14,20 +17,20 @@ library(neMDBD)
 # Original data, embedding, perturbation score (calculated by server) are stored in the following file.
 load('./data/SimulatedStudy/5GMM_PScore_tsne_perplexity_60.RData')
 px_label = ggplot(data = data.frame(X1 = X[,1], X2 = X[,2], label = label), aes(x = X1, y = X2, color = as.factor(label))) +
-  geom_point(size = 2, show.legend = TRUE) + 
-  guides(color = guide_legend(override.aes = list(size = 2))) + 
+  geom_point(size = 2, show.legend = TRUE) +
+  guides(color = guide_legend(override.aes = list(size = 2))) +
   ggtitle('Input Space with Label') + labs(color = 'Label')
 py_label = ggplot(data = data.frame(X1 = Y[,1], X2 = Y[,2], label = label), aes(x = X1, y = X2, color = as.factor(label))) +
-  geom_point(size = 1.5, show.legend = TRUE) + 
-  guides(color = guide_legend(override.aes = list(size = 2))) + 
+  geom_point(size = 1.5, show.legend = TRUE) +
+  guides(color = guide_legend(override.aes = list(size = 2))) +
   ggtitle('Embedding with Label') + labs(color = 'Label') +  xlab('tSNE1') + ylab('tSNE2')
-px_score = ggplot(data = data.frame(X1 = X[,1], X2 = X[,2], color = perturb_score), 
+px_score = ggplot(data = data.frame(X1 = X[,1], X2 = X[,2], color = perturb_score),
                   aes(x = X1, y = X2, color = color)) +
-  geom_point(size = 2) + 
+  geom_point(size = 2) +
   scale_color_viridis() + labs(color = 'Perturbation\nScore') + ggtitle('Input Space with Perturbation Score')
-py_score = ggplot(data = data.frame(X1 = Y[,1], X2 = Y[,2], color = perturb_score, point_size = ifelse(perturb_score > 8, 2.2, 1.5)), 
+py_score = ggplot(data = data.frame(X1 = Y[,1], X2 = Y[,2], color = perturb_score, point_size = ifelse(perturb_score > 8, 2.2, 1.5)),
                   aes(x = X1, y = X2, color = color, size = point_size)) +
-  geom_point(show.legend = c(color = TRUE, size = FALSE)) + 
+  geom_point(show.legend = c(color = TRUE, size = FALSE)) +
   scale_size_identity() + scale_color_viridis() + labs(color = 'Perturbation\nScore') + ggtitle('Embedding with Perturbation Score') + xlab('tSNE1') + ylab('tSNE2')
 ggsave(px_label, filename = './plots/SimulatedStudy/5GMM_pscore_x_label.png', width = 5, height = 4)
 ggsave(py_label, filename = './plots/SimulatedStudy/5GMM_pscore_y_label.png', width = 5, height = 4)
@@ -69,10 +72,10 @@ entropy_Y = sapply(1:dim(Y)[1], function(i) {-sum(prob_prop_Y[i, prob_prop_Y[i,]
 entropy_difference = entropy_X - entropy_Y
 
 px_entropy = ggplot(data = data.frame(X1 = X[,1], X2 = X[,2], color = entropy_difference), aes(x = X1, y = X2, color = color)) +
-  geom_point(size = 2) + 
+  geom_point(size = 2) +
   scale_color_viridis() + labs(color = 'Entropy\nDifference') + ggtitle('Input Space with Entropy Difference')
 py_entropy = ggplot(data = data.frame(X1 = Y[,1], X2 = Y[,2], color = entropy_difference, point_size = ifelse(perturb_score > 8, 2.2, 1.5)), aes(x = X1, y = X2, color = color, size = point_size)) +
-  geom_point(show.legend = c(color = TRUE, size = FALSE)) + 
+  geom_point(show.legend = c(color = TRUE, size = FALSE)) +
   scale_size_identity() + scale_color_viridis() + labs(color = 'Entropy\nDifference') + ggtitle('Embedding with Entropy Difference') + xlab('tSNE1') + ylab('tSNE2')
 ggsave(px_entropy, filename = './plots/SimulatedStudy/5GMM_pscore_x_entropy.png', width = 5, height = 4)
 ggsave(py_entropy, filename = './plots/SimulatedStudy/5GMM_pscore_y_entropy.png', width = 5, height = 4)
@@ -108,7 +111,7 @@ options(scipen = -1)
 my_labeller = function(labels) {return(paste("Perplexity", labels))}
 
 p1 = ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = label)) +
-  geom_point(size = 0.3, show.legend = TRUE) + 
+  geom_point(size = 0.3, show.legend = TRUE) +
   facet_wrap(~perplexity, nrow = 2, scales = "free", labeller = as_labeller(my_labeller)) +
   xlab('tSNE1') + ylab('tSNE2') + labs(color = "Label") + guides(color = guide_legend(override.aes = list(size = 2)))
 
@@ -124,10 +127,10 @@ p2 = ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = sscore_adj)
 colors = c('#FF1F5B','#A0B1BA')
 plot_mat$bi_label = factor(plot_mat$bi_label, levels = c('1', '0'))
 p3 = ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = as.factor(bi_label), size = ifelse(bi_label == 1, 1, 0.5))) +
-  geom_point(show.legend = c(color = TRUE, size = FALSE)) + 
+  geom_point(show.legend = c(color = TRUE, size = FALSE)) +
   scale_size_identity()+
   facet_wrap(~perplexity, nrow = 2, scales = "free", labeller = as_labeller(my_labeller)) +
-  scale_color_manual(values = colors,name = "Dichotomized\nSingularity\nScore", labels = c('score\n> 2000', 'otherwise')) + 
+  scale_color_manual(values = colors,name = "Dichotomized\nSingularity\nScore", labels = c('score\n> 2000', 'otherwise')) +
   guides(color = guide_legend(override.aes = list(size = 2))) + xlab('tSNE1') + ylab('tSNE2')
 
 ggsave(p1,filename = './plots/SimulatedStudy/8GMM_plot1_compare2perps.png', width = 8, height = 10)
@@ -160,12 +163,12 @@ fit = manova(Y ~ label, data = data.frame(Y=Y, label = label))
 print(summary(fit, test = "Wilks"))
 # Df     Wilks approx F num Df den Df
 # label       7 0.0028423   2006.5     14   1582
-# Residuals 792                                 
-# Pr(>F)    
+# Residuals 792
+# Pr(>F)
 # label     < 2.2e-16 ***
-#   Residuals              
+#   Residuals
 # ---
-#   Signif. codes:  
+#   Signif. codes:
 #   0 ‘***’ 1e-03 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 # Perplexity 50
@@ -191,12 +194,12 @@ fit = manova(Y ~ label, data = data.frame(Y=Y, label = label))
 print(summary(fit, test = "Wilks"))
 # Df      Wilks approx F num Df den Df
 # label       7 8.9514e-06    37656     14   1582
-# Residuals 792                                  
-# Pr(>F)    
+# Residuals 792
+# Pr(>F)
 # label     < 2.2e-16 ***
-#   Residuals              
+#   Residuals
 # ---
-#   Signif. codes:  
+#   Signif. codes:
 #   0 ‘***’ 1e-03 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 
@@ -230,7 +233,7 @@ options(scipen = -1)
 my_labeller = function(labels) {return(paste("Perplexity", labels))}
 
 p1 = ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = label)) +
-  geom_point(size = 0.3, show.legend = TRUE) + 
+  geom_point(size = 0.3, show.legend = TRUE) +
   facet_wrap(~perplexity, nrow = 2, scales = "free", labeller = as_labeller(my_labeller)) +
   xlab('tSNE1') + ylab('tSNE2') + labs(color = 'Spiral\nAngle')
 
@@ -246,10 +249,10 @@ p2 = ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = sscore_adj)
 colors = c('#FF1F5B','#A0B1BA')
 plot_mat$bi_label = factor(plot_mat$bi_label, levels = c('1', '0'))
 p3 = ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = as.factor(bi_label), size = ifelse(bi_label == 1, 1, 0.5))) +
-  geom_point(show.legend = c(color = TRUE, size = FALSE)) + 
+  geom_point(show.legend = c(color = TRUE, size = FALSE)) +
   scale_size_identity()+
   facet_wrap(~perplexity, nrow = 2, scales = "free", labeller = as_labeller(my_labeller)) +
-  scale_color_manual(values = colors,name = "Dichotomized\nSingularity\nScore", labels = c('score\n> 4000', 'otherwise')) + 
+  scale_color_manual(values = colors,name = "Dichotomized\nSingularity\nScore", labels = c('score\n> 4000', 'otherwise')) +
   guides(color = guide_legend(override.aes = list(size = 2))) + xlab('tSNE1') + ylab('tSNE2')
 
 ggsave(p1,filename = './plots/SimulatedStudy/Swissroll_plot1_compare2perps.png', width = 8, height = 10)
