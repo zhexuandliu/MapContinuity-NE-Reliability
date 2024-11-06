@@ -43,7 +43,7 @@ generate_data = function(n, d = 2, data_type){
     X = t(data.X1)
     X = X[sample(c(1:dim(X)[1]), n, replace = FALSE),]
   }else if (data_type == 'cifar10'){
-    X = read.csv("./datasets/cifar10.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE, na.strings = "NA")
+    X = read.csv("./datasets/cifar10.csv", header = TRUE, sep = ",", stringsAsFactors = FALSE, na.strings = "NA") # available upon request as the size is too large (or can be adapted from the CIFAR10 dataset in the DeepLearningFeatures dataset)
     X = as.matrix(X)
     X = X[sample(c(1:dim(X)[1]), n, replace = FALSE),]
   }else{
