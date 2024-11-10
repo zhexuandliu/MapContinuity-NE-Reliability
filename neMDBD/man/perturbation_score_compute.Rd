@@ -39,7 +39,7 @@ perturbation_score_compute(
 \item{pca_scale}{Logical. Should data be scaled before pca is applied? (default: FALSE)}
 }
 \value{
-Perturbation score for the i-th point in the data.
+Perturbation scores.
 }
 \description{
 Given the perturbation direction and length for specified point, calculate the perturbation scores.

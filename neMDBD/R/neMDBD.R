@@ -125,8 +125,8 @@ singularity_score_compute = function(Y, P){
     return(1/min(eigen(h)$values))
   }
   H = hessian_compute(Y, P)
-  s_score = sapply(c(1:dim(Y)[1]), function(x) eigen_score_pointwise(Hessian = H, x))
-  return(s_score)
+  sscore = sapply(c(1:dim(Y)[1]), function(x) eigen_score_pointwise(Hessian = H, x))
+  return(sscore)
 }
 
 
@@ -159,7 +159,7 @@ LOO_loss_fast = function(yy, Y, YDistSqP1, PMat){
 
 #' LOO_loss_compute
 #'
-#' get t-SNE LOO loss for specified point
+#' get t-SNE LOO loss for the specified point
 #'
 #' @param yy Vector. Proposed embedding point of the point x that we want to calculate loss with.
 #' @param Y Matrix. Embedding matrix of X.
@@ -422,7 +422,7 @@ perturbation_score_compute_pointwise = function(i, X, Y, perplexity, dir_vec, le
 #' @param initial_dims Integer. The number of dimensions that should be retained in the initial PCA step in t-SNE.
 #' @param pca_center Logical. Should data be centered before pca is applied? (default: TRUE)
 #' @param pca_scale Logical. Should data be scaled before pca is applied? (default: FALSE)
-#' @return Perturbation score for the i-th point in the data.
+#' @return Perturbation scores.
 #' @examples
 #' perturbation_score_compute(X, Y, perplexity, length, approx)
 #' @export
@@ -443,7 +443,7 @@ perturbation_score_compute = function(X, Y, perplexity, length, approx, ind = NU
   P_unnormalized = NULL
   beta = NULL
   if (approx == 2){
-    out = neMDBD::get_P_tsne(normalize_input(X), perplexity)
+    out = get_P_tsne(normalize_input(X), perplexity)
     P_unnormalized = out$P_unnormalized
     beta = out$beta
   }
@@ -468,11 +468,11 @@ perturbation_score_compute = function(X, Y, perplexity, length, approx, ind = NU
 
   if (is.null(no.cores)){
     pscore = sapply(ind, function(i){
-      return(neMDBD::perturbation_score_compute_pointwise(i, X, Y, perplexity = perplexity, dir_vec = dir_vec, length = 1, Ydist_sq = Ydist_sq, initial_dims = 50, PCA_result = PCA_x, P_unnormalized = P_unnormalized, beta = beta, approx = approx))})
+      return(perturbation_score_compute_pointwise(i, X, Y, perplexity = perplexity, dir_vec = dir_vec, length = 1, Ydist_sq = Ydist_sq, initial_dims = 50, PCA_result = PCA_x, P_unnormalized = P_unnormalized, beta = beta, approx = approx))})
     return(pscore)
   }else{
     pscore = unlist(mclapply(ind,
-                             function(i){return(neMDBD::perturbation_score_compute_pointwise(i, X, Y, perplexity = perplexity, dir_vec = dir_vec, length = 1, Ydist_sq = Ydist_sq, initial_dims = 50, PCA_result = PCA_x, P_unnormalized = P_unnormalized, beta = beta, approx = approx))},
+                             function(i){return(perturbation_score_compute_pointwise(i, X, Y, perplexity = perplexity, dir_vec = dir_vec, length = 1, Ydist_sq = Ydist_sq, initial_dims = 50, PCA_result = PCA_x, P_unnormalized = P_unnormalized, beta = beta, approx = approx))},
                              mc.cores = no.cores))
     return(pscore)
   }

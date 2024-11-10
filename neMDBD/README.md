@@ -1,16 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# Map discontinuity based diagnosis for t-SNE
+# Map discontinuity based diagnosis for neighbor embedding methods
 
 ## Installation
 
 To install the package from the github repository, use:
 
 ``` r
-if(!require(devtools)) install.packages("devtools") # If not already installed
-devtools::install_github("zhexuandliu/NE-Reliability-MapContinuity/neMDBD")
-devtools::install_github("zhexuandliu/NE-Reliability-MapContinuity/RtsneWithP")
+# if(!require(devtools)) install.packages("devtools") # If not already installed
+# devtools::install_github("zhexuandliu/RtsneWithP")
+# devtools::install_github("zhexuandliu/neMDBD")
 ```
 
 ## Usage
@@ -23,6 +23,7 @@ library(neMDBD)
 library(RtsneWithP)
 library(ggplot2)
 library(Rfast)
+library(MGMM)
 
 # generate Gaussian mixture data as an example
 set.seed(1)
@@ -53,10 +54,42 @@ ggplot() +
 
 ### Perturbation score
 
+The perturbation score is available for t-SNE algorithm.
+
+#### Inputs
+
+- `X`: Matrix. The original data to be visualized.
+- `Y`: Matrix. The embedding of the original data.
+- `perplexity`: Integer. The perplexity parameter used in the t-SNE
+  algorithm to obtain `Y`.
+- `length`: Numeric. Length of perturbation. This parameter must be
+  specified by the user.
+- `approx`: Integer. `0` for computing the exact perturbation scores.
+  `1` implies reusing the original PCA result for approximation. `2`
+  accelerates the algorithm by computing the approximation of the
+  similarity matrix.
+- `ind`: Vector. The indices of points for which perturbation scores
+  will be calculated. (default: `NULL` (calculate for all points))
+- `no.cores`: Integer. Number of cores for parallel computing. (default:
+  NULL (no parallel computing))
+- `initial_dims`: Integer. The number of dimensions that should be
+  retained in the initial PCA step in t-SNE. (default: `50` (as in the
+  `Rtsne` implementation))
+- `pca_center`: Logical. Should data be centered before pca is applied?
+  (default: `TRUE` (as in the `Rtsne` implementation))
+- `pca_scale`: Logical. Should data be scaled before pca is applied?
+  (default: `FALSE` (as in the `Rtsne` implementation))
+
+#### Output
+
+- `pscore`: Vector. Perturbation scores.
+
+#### Tutorial
+
 ``` r
 ### calculate perturbation score for all points
-# approx = 0 for exact perturbation score, approx = 1 or 2 for acceleration
-pscore = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 0)
+### Set approx = 0 for exact perturbation score, approx = 1 or 2 for acceleration
+pscore = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 0) # took 38.076s on a MacBook Air (M2 chip)
 ```
 
 ``` r
@@ -67,10 +100,9 @@ ggplot() +
   ggtitle('Embedding with perturbation score')
 ```
 
-![](tools/example4-1.png)<!-- -->
+![](tools/unnamed-chunk-5-1.png)<!-- -->
 
 ``` r
-
 ggplot() +
   geom_point(data = data.frame(x = X[, 1], y = X[, 2], score = pscore),
              aes(x = x, y = y, color = score)) +
@@ -78,15 +110,53 @@ ggplot() +
   ggtitle('Original data with perturbation score')
 ```
 
-![](tools/example4-2.png)<!-- -->
+![](tools/unnamed-chunk-5-2.png)<!-- -->
 
-#### Pre-screening points
+##### Approximation method 1
 
 ``` r
-### pre-screening of points on the peripheries using 'dbscan'
+# Set approx = 1 for acceleration by reusing the original PCA result
+### The perturbation scores by the approximation method 1 are close to the exact perturbation scores.
+pscore1 = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 1) # took 36.665s on a MacBook Air (M2 chip) 
+# The improvement is more significant for larger datasets as the PCA is relatively fast for small datasets.
+ggplot() +
+  geom_point(data = data.frame(approx0 = pscore, approx1 = pscore1),
+             aes(x = approx0, y = approx1))
+```
+
+![](tools/unnamed-chunk-6-1.png)<!-- -->
+
+##### Approximation method 2
+
+``` r
+### Set approx = 2 for acceleration by approximating the similarity matrix
+### The perturbation scores by the approximation method 2 are close to the exact perturbation scores.
+pscore2 = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 2) # took 32.160s on a MacBook Air (M2 chip) 
+# The improvement is more significant for larger datasets as the similarity matrix computation is relatively fast for small datasets.
+ggplot() +
+  geom_point(data = data.frame(approx0 = pscore, approx2 = pscore2),
+             aes(x = approx0, y = approx2))
+```
+
+![](tools/unnamed-chunk-7-1.png)<!-- -->
+
+##### Parallel computing
+
+``` r
+### set the number of cores `no.cores` for parallel computing
+library(parallel)
+pscore = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 0, no.cores = 8) # took 13.355s on a MacBook Air (M2 chip)
+```
+
+##### Pre-screening points
+
+``` r
+### Pre-screening of points on the peripheries using 'dbscan'
+### Most of the points with large perturbation scores are identified.
+library(dbscan)
 ind = which(!dbscan::is.corepoint(tsne_out$Y, eps = 1, minPts = 10))
 pscore = rep(NA, dim(X)[1])
-pscore[ind] = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 2, ind = ind)
+pscore[ind] = perturbation_score_compute(X, tsne_out$Y, perplexity, length = 0.5, approx = 2, ind = ind, no.cores = 8) # took 2.499s on a MacBook Air (M2 chip)
 ```
 
 ``` r
@@ -97,10 +167,9 @@ ggplot() +
   ggtitle('Embedding with perturbation score (prescreened)')
 ```
 
-![](tools/example5-1.png)<!-- -->
+![](tools/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
-
 ggplot() +
   geom_point(data = data.frame(x = X[, 1], y = X[, 2], score = pscore),
              aes(x = x, y = y, color = score)) +
@@ -108,9 +177,22 @@ ggplot() +
   ggtitle('Original data with perturbation score (prescreened)')
 ```
 
-![](tools/example5-2.png)<!-- -->
+![](tools/unnamed-chunk-10-2.png)<!-- -->
 
 ### Singularity score
+
+The singularity score is available for t-SNE algorithm.
+
+#### Inputs
+
+- `Y`: Matrix. The embedding of the original data.
+- `P`: Matrix. The similarity matrix output by the t-SNE algorithm.
+
+#### Output
+
+- `sscore`: Vector. Singularity scores.
+
+#### Tutorial
 
 First, we should examine the gradient of the t-SNE loss function to
 determine if a local minimum has been reached. Small gradient values
@@ -130,7 +212,7 @@ for fracture-inducing discontinuity diagnosis.
 ### calculate singularity score
 
 # compute the singularity score
-sscore = singularity_score_compute(tsne_out$Y, tsne_out$P)
+sscore = singularity_score_compute(tsne_out$Y, tsne_out$P) # took 0.055s on a MacBook Air (M2 chip)
 
 # plot singularity score
 ggplot() +
@@ -138,12 +220,15 @@ ggplot() +
   viridis::scale_color_viridis(direction = 1, trans = 'log10', name = "Singularity\nScore")
 ```
 
-![](tools/example2-1.png)<!-- -->
+![](tools/unnamed-chunk-12-1.png)<!-- -->
 
-Singularity scores can also guide the selection of perplexity.
+Singularity scores can also guide the selection of perplexity. We select
+the perplexity as the elbow point in the plot of the mean of top 5%
+singularity scores versus perplexity.
 
 ``` r
 ### utilize singularity score to choose perplexity
+### Select the perplexity as the elbow point in the plot of mean of top 5% singularity scores versus perplexity.
 
 # calculate the singularity score for each perplexity candidate
 perplexity_candidates = c(seq(5,90,5))
@@ -153,7 +238,7 @@ for (i in c(1:length(perplexity_candidates))){
   sscore_mat[,i] = singularity_score_compute(tsne_out_i$Y, tsne_out_i$P)
 }
 
-# plot the mean of top 5% singularity score versus perplexity
+# plot the mean of top 5% singularity scores versus perplexity
 # choose the elbow point as the perplexity to use
 ggplot(data = data.frame(
   mean = apply(sscore_mat, 2, 
@@ -163,13 +248,13 @@ ggplot(data = data.frame(
   geom_point(aes(x = perplexity, y = mean))
 ```
 
-![](tools/example3-1.png)<!-- -->
+![](tools/unnamed-chunk-13-1.png)<!-- -->
 
 # Details
 
-This R package offers functions to calculate singularity score and
+This R package implements functions to calculate singularity score and
 perturbation score, to diagnose fracture-inducing and
-overconfidence-inducing discontinuities.
+overconfidence-inducing discontinuities in \[4\].
 
 # References
 
@@ -180,3 +265,7 @@ overconfidence-inducing discontinuities.
 \[3\] L.J.P. van der Maaten and G.E. Hinton. “Visualizing
 High-Dimensional Data Using t-SNE.” Journal of Machine Learning Research
 9(Nov):2579-2605, 2008.
+
+\[4\] Z. Liu, R. Ma, Y. Zhong. Assessing and improving reliability of
+neighbor embedding methods: a map-continuity perspective.
+arXiv:2410.16608, 2024.
