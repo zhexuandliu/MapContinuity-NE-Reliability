@@ -12,8 +12,8 @@ input space, i.e. $p_{ij}$’s \[2\].
 To install the package from the github repository, use:
 
 ``` r
-# if(!require(devtools)) install.packages("devtools") # If not already installed
-# devtools::install_github("zhexuandliu/RtsneWithP")
+if(!require(devtools)) install.packages("devtools") # If not already installed
+devtools::install_github("zhexuandliu/RtsneWithP")
 ```
 
 ## Usage
