@@ -80,6 +80,7 @@ plot_mat = data.frame(y1 = rep(0,length(perplexity_vec)*dim(X)[1]),
                       sscore = rep(0,length(perplexity_vec)*dim(X)[1]),
                       perplexity = rep(0,length(perplexity_vec)*dim(X)[1]))
 pcol_list = vector('list', length = length(perplexity_vec))
+# the following for-loop may take a few minutes to execute
 for (i in 1:length(perplexity_vec)){
   perplexity = perplexity_vec[i]
   load(paste('./data/SingleCell/hayashi_tsne_perplexity_',perplexity,'.RData', sep = ''))
@@ -282,6 +283,7 @@ plot_mat = data.frame(y1 = rep(0,length(perplexity_vec)*dim(Y)[1]),
                       label = rep(as.factor(ct.X1),length(perplexity_vec)),
                       bi_label = rep(0,length(perplexity_vec)*dim(Y)[1]))
 pcol_list = vector('list', length = length(perplexity_vec))
+# the following for-loop may take a few minutes to execute
 for (i in 1:length(perplexity_vec)){
   perplexity = perplexity_vec[i]
   filename = paste('./data/SingleCell/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity,'_Y.RData',sep='')
