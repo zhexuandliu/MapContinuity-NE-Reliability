@@ -13,10 +13,10 @@ The directory `RtsneWithP` contains the modified R package `Rtsne` with the simi
 The directory `Code and data` contains the R scripts for reproducing the data analysis and examples in the manuscript.
 
 ## Get started
-For the quick guide to the two diagnostic scores, please check out https://github.com/zhexuandliu/MapContinuity-NE-Reliability/blob/main/neMDBD/README.md.
+- For the quick guide to the two diagnostic scores, please see https://github.com/zhexuandliu/MapContinuity-NE-Reliability/blob/main/neMDBD/README.md.
 
-To find out how to extract the similarity matrix computed in `Rtsne`, please check out https://github.com/zhexuandliu/MapContinuity-NE-Reliability/blob/main/RtsneWithP/README.md.
+- To check how to extract the similarity matrix computed in `Rtsne`, please check out https://github.com/zhexuandliu/MapContinuity-NE-Reliability/blob/main/RtsneWithP/README.md.
 
-To check how to draw the LOO loss landscape and other implementation details, please check out the folder `Code and data`.
+- For other implementation details including how to draw the LOO loss landscape, please see the folder `Code and data`.
 
 For further questions and inquiries, please contact Zhexuan Liu (zhexuan.liu2@wisc.edu).
