@@ -258,13 +258,13 @@ ggplot(data = data.frame(
 
 ![](tools/unnamed-chunk-13-1.png)<!-- -->
 
-# Details
+## Details
 
 This R package implements functions to calculate singularity score and
 perturbation score, to diagnose fracture-inducing and
 overconfidence-inducing discontinuities in \[4\].
 
-# References
+## References
 
 \[1\] <https://github.com/jkrijthe/Rtsne>
 
