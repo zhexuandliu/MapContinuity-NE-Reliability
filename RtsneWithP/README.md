@@ -34,14 +34,14 @@ print(tsne_out$P[1:5,1:5])
 #> [5,]  4.233656e-04  6.190919e-05  1.020901e-04  5.495371e-05 5.638258e-312
 ```
 
-# Details
+## Details
 
 This R package offers an extra return value based on the Rtsne()
 function of the original package \[1\]. Note that the returned
 similarity matrix is accurate only when the parameter `theta` is set to
 be $0$ (exact tSNE).
 
-# References
+## References
 
 \[1\] <https://github.com/jkrijthe/Rtsne>
 
