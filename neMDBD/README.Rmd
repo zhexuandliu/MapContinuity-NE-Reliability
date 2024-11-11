@@ -220,10 +220,10 @@ ggplot(data = data.frame(
 ```
 
 
-# Details
+## Details
 This R package implements functions to calculate singularity score and perturbation score, to diagnose fracture-inducing and overconfidence-inducing discontinuities in [4].
 
-# References
+## References
 [1] https://github.com/jkrijthe/Rtsne
 
 [2] https://github.com/jdonaldson/rtsne
