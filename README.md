@@ -8,9 +8,9 @@ Liu, Z., Ma, R., Zhong, Y. (2024) Assessing and improving reliability of neighbo
 ## Contents
 The directory `neMDBD` contains the R package `neMDBD` for implementation of perturbation score and singularity score.
 
-The directory `RtsneWithP` contains the modified R package `Rtsne` with the similarity matrix as an extra output.
-
 The directory `Code and data` contains the R scripts for reproducing the data analysis and examples in the manuscript.
+
+The directory `RtsneWithP` contains the modified R package `Rtsne` with the similarity matrix as an extra output.
 
 ## Get started
 - For the quick guide to the two diagnostic scores, please see https://github.com/zhexuandliu/MapContinuity-NE-Reliability/blob/main/neMDBD/README.md.
