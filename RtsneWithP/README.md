@@ -24,7 +24,7 @@ For Mac users, it is possible to encounter error when installing the package `Rt
 library(RtsneWithP) # Load package
 iris_unique <- unique(iris) # Remove duplicates
 set.seed(42) # Sets seed for reproducibility
-tsne_out <- Rtsne(as.matrix(iris_unique[,1:4]), theta = 0) # set theta=0 to run exact tSNE
+tsne_out <- RtsneWithP::Rtsne(as.matrix(iris_unique[,1:4]), theta = 0) # set theta=0 to run exact tSNE
 print(tsne_out$P[1:5,1:5])
 #>               [,1]          [,2]          [,3]          [,4]          [,5]
 #> [1,] 5.173550e-312  9.085358e-05  9.642498e-05  5.262639e-05  4.233656e-04
