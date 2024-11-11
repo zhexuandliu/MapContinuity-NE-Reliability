@@ -68,7 +68,7 @@ The perturbation score is available for t-SNE algorithm.
 
 - `X`: Matrix. The original data to be visualized.
 - `Y`: Matrix. The embedding of the original data.
-- `perplexity`: Integer. The perplexity parameter used in the t-SNE
+- `perplexity`: Numeric. The perplexity parameter used in the t-SNE
   algorithm to obtain `Y`.
 - `length`: Numeric. Length of perturbation. This parameter must be
   specified by the user.
