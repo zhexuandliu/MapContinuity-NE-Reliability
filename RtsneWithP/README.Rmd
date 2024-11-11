@@ -37,10 +37,10 @@ print(tsne_out$P[1:5,1:5])
 ```
 
 
-# Details
+## Details
 This R package offers an extra return value based on the Rtsne() function of the original package [1]. Note that the returned similarity matrix is accurate only when the parameter `theta` is set to be $0$ (exact tSNE).
 
-# References
+## References
 [1] https://github.com/jkrijthe/Rtsne
 
 [2] L.J.P. van der Maaten and G.E. Hinton. "Visualizing High-Dimensional Data Using t-SNE." Journal of Machine Learning Research 9(Nov):2579-2605, 2008.
