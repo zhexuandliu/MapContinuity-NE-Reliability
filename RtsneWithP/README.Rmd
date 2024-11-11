@@ -32,7 +32,7 @@ To install the package from the github repository, use:
 library(RtsneWithP) # Load package
 iris_unique <- unique(iris) # Remove duplicates
 set.seed(42) # Sets seed for reproducibility
-tsne_out <- Rtsne(as.matrix(iris_unique[,1:4]), theta = 0) # set theta=0 to run exact tSNE
+tsne_out <- RtsneWithP::Rtsne(as.matrix(iris_unique[,1:4]), theta = 0) # set theta=0 to run exact tSNE
 print(tsne_out$P[1:5,1:5])
 ```
 
