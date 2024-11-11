@@ -11,7 +11,7 @@ It is possible to encounter errors when installing the R package `RtsneWithP` if
 - Run `brew list --versions gcc` to check your `gcc` version and change `gcc` version `11.3.0_2` above to whatever your `gcc` version is.
 - Restart `R` and install `RtsneWithP` again.
 
-### Reference
+### References
 [1] https://stackoverflow.com/questions/69639782/installing-gfortran-on-macbook-with-apple-m1-chip-for-use-in-r
 
 [2] https://github.com/Rdatatable/data.table/issues/4437
