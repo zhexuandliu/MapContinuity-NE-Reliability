@@ -73,7 +73,7 @@ The perturbation score is available for t-SNE algorithm.
 
 - `X`: Matrix. The original data to be visualized.
 - `Y`: Matrix. The embedding of the original data.
--  `perplexity`: Integer. The perplexity parameter used in the t-SNE algorithm to obtain `Y`.
+-  `perplexity`: Numeric. The perplexity parameter used in the t-SNE algorithm to obtain `Y`.
 - `length`: Numeric. Length of perturbation. This parameter must be specified by the user.
 - `approx`: Integer. `0` for computing the exact perturbation scores. `1` implies reusing the original PCA result for approximation. `2` accelerates the algorithm by computing the approximation of the similarity matrix.
 - `ind`: Vector. The indices of points for which perturbation scores will be calculated. (default: `NULL` (calculate for all points))
