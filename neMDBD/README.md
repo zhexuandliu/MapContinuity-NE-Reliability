@@ -19,6 +19,8 @@ devtools::install_github("zhexuandliu/RtsneWithP")
 devtools::install_github("zhexuandliu/neMDBD")
 ```
 
+For Mac users, it is possible to encounter error when installing the package `RtsneWithP` if `gfortran` is not already installed. Please see https://github.com/zhexuandliu/MapContinuity-NE-Reliability/blob/main/RtsneWithP/gfortran-install.md for detailed instructions on the installation of `gfortran`. Or install the package from binaries, which can be downloaded from https://github.com/zhexuandliu/MapContinuity-NE-Reliability/tree/main/Code%20and%20data/PackageBinaries.
+
 ## Usage
 
 ``` r
