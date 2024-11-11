@@ -8,3 +8,4 @@ It is possible to encounter errors when installing the R package `RtsneWithP` if
 >>`F77 = /opt/homebrew/Cellar/gcc/11.3.0_2/bin/gfortran`
 
 >>`FLIBS = -L/opt/homebrew/Cellar/gcc/11.3.0_2/lib/gcc/11`
+- Change gcc version `11.3.0_2` to whatever your `gcc` version is (run `brew list --versions gcc` to check your `gcc` version).
