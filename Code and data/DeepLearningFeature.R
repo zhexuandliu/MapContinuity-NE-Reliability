@@ -15,6 +15,8 @@ library(viridis)
 library(ROCR)
 
 # We subsampled the test dataset to 5000 points and stored the embedding points (indices stored in 'cifar10_5000_ind.RData').
+# set.seed(1)
+# ind = sample(1:10000, 5000, replace = FALSE)
 load('./data/DeepLearningFeatures/embedding/cifar10_perplexity_125.RData')
 load('./data/DeepLearningFeatures/embedding/cifar10_5000_label.RData')
 load('./data/DeepLearningFeatures/embedding/cifar10_5000_ind.RData')
