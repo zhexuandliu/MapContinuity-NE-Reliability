@@ -152,3 +152,171 @@ ggsave(p_label, file = './plots/DeepLearningFeatures/cifar10_DTD_embedding.png',
 ggsave(p1, file = './plots/DeepLearningFeatures/cifar10_DTD_zoom1.png', width = 15, height = 4)
 ggsave(p2, file = './plots/DeepLearningFeatures/cifar10_DTD_zoom2.png', width = 15, height = 4)
 ggsave(p3, file = './plots/DeepLearningFeatures/cifar10_DTD_zoom3.png', width = 15, height = 4)
+
+########################################
+# Compare with Kernel PCA and One-class SVM
+# Updated on May 10, 2025
+
+test_OOD_KPCA_score = np$load("./data/DeepLearningFeatures/KPCA/KPCA_CoP_In.npy")
+dtd_OOD_KPCA_score = np$load("./data/DeepLearningFeatures/KPCA/KPCA_CoP_OOD.npy")
+KPCA_score = c(test_OOD_KPCA_score, dtd_OOD_KPCA_score)
+test_OOD_OCSVM_score = np$load("./data/DeepLearningFeatures/OCSVM/OCSVM_In.npy")
+dtd_OOD_OCSVM_score = np$load("./data/DeepLearningFeatures/OCSVM/OCSVM_OOD.npy")
+OCSVM_score = c(test_OOD_OCSVM_score, dtd_OOD_OCSVM_score)
+label = c(rep("InD", 2000), rep('DTD (OOD)', 1000))
+
+KPCA_score_zoom = KPCA_score[id1]
+OOD_id = (label[id1] == 'DTD (OOD)')
+pred = prediction(KPCA_score_zoom, OOD_id)
+perf = performance(pred, "tpr", "fpr")
+perf.auc = performance(pred, measure = "auc")
+ROC_curve_KPCA = ggplot(data = data.frame(x = perf@x.values[[1]], y = perf@y.values[[1]]),aes(x = x, y = y)) + geom_line() +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text(x = 0.75, y = 0.25,
+            label = paste('AUC =', round(perf.auc@y.values[[1]],4)),
+            hjust = 0.75, vjust = -1, size = 5)+
+  labs(x = NULL, y = NULL)+
+  theme_minimal()+
+  theme_minimal() +
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )  + xlab('False Positive Rate') + ylab('True Positive Rate')
+OCSVM_score_zoom = -OCSVM_score[id1]
+OOD_id = (label[id1] == 'DTD (OOD)')
+pred = prediction(OCSVM_score_zoom, OOD_id)
+perf = performance(pred, "tpr", "fpr")
+perf.auc = performance(pred, measure = "auc")
+ROC_curve_OCSVM = ggplot(data = data.frame(x = perf@x.values[[1]], y = perf@y.values[[1]]),aes(x = x, y = y)) + geom_line() +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text(x = 0.75, y = 0.25,
+            label = paste('AUC =', round(perf.auc@y.values[[1]],4)),
+            hjust = 0.75, vjust = -1, size = 5)+
+  labs(x = NULL, y = NULL)+
+  theme_minimal()+
+  theme_minimal() +
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )  + xlab('False Positive Rate') + ylab('True Positive Rate')
+P = egg::ggarrange(ROC_curve_KPCA + ggtitle("Kernel PCA"), 
+                   ROC_curve_OCSVM + ggtitle("One-class SVM"), ncol = 2)
+ggsave(P, file = "./plots/DeepLearningFeatures/compare_1.png", width = 13.5/7*10/2, height = 3.6/7*10)
+
+KPCA_score_zoom = KPCA_score[id2]
+OOD_id = (label[id2] == 'DTD (OOD)')
+pred = prediction(KPCA_score_zoom, OOD_id)
+perf = performance(pred, "tpr", "fpr")
+perf.auc = performance(pred, measure = "auc")
+ROC_curve_KPCA = ggplot(data = data.frame(x = perf@x.values[[1]], y = perf@y.values[[1]]),aes(x = x, y = y)) + geom_line() +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text(x = 0.75, y = 0.25,
+            label = paste('AUC =', round(perf.auc@y.values[[1]],4)),
+            hjust = 0.75, vjust = -1, size = 5)+
+  labs(x = NULL, y = NULL)+
+  theme_minimal()+
+  theme_minimal() +
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )  + xlab('False Positive Rate') + ylab('True Positive Rate')
+OCSVM_score_zoom = -OCSVM_score[id2]
+OOD_id = (label[id2] == 'DTD (OOD)')
+pred = prediction(OCSVM_score_zoom, OOD_id)
+perf = performance(pred, "tpr", "fpr")
+perf.auc = performance(pred, measure = "auc")
+ROC_curve_OCSVM = ggplot(data = data.frame(x = perf@x.values[[1]], y = perf@y.values[[1]]),aes(x = x, y = y)) + geom_line() +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text(x = 0.75, y = 0.25,
+            label = paste('AUC =', round(perf.auc@y.values[[1]],4)),
+            hjust = 0.75, vjust = -1, size = 5)+
+  labs(x = NULL, y = NULL)+
+  theme_minimal()+
+  theme_minimal() +
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )  + xlab('False Positive Rate') + ylab('True Positive Rate')
+P = egg::ggarrange(ROC_curve_KPCA + ggtitle("Kernel PCA"), 
+                   ROC_curve_OCSVM + ggtitle("One-class SVM"), ncol = 2)
+ggsave(P, file = "./plots/DeepLearningFeatures/compare_2.png", width = 13.5/7*10/2, height = 3.6/7*10)
+
+KPCA_score_zoom = KPCA_score[id3]
+OOD_id = (label[id3] == 'DTD (OOD)')
+pred = prediction(KPCA_score_zoom, OOD_id)
+perf = performance(pred, "tpr", "fpr")
+perf.auc = performance(pred, measure = "auc")
+ROC_curve_KPCA = ggplot(data = data.frame(x = perf@x.values[[1]], y = perf@y.values[[1]]),aes(x = x, y = y)) + geom_line() +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text(x = 0.75, y = 0.25,
+            label = paste('AUC =', round(perf.auc@y.values[[1]],4)),
+            hjust = 0.75, vjust = -1, size = 5)+
+  labs(x = NULL, y = NULL)+
+  theme_minimal()+
+  theme_minimal() +
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )  + xlab('False Positive Rate') + ylab('True Positive Rate')
+OCSVM_score_zoom = -OCSVM_score[id3]
+OOD_id = (label[id3] == 'DTD (OOD)')
+pred = prediction(OCSVM_score_zoom, OOD_id)
+perf = performance(pred, "tpr", "fpr")
+perf.auc = performance(pred, measure = "auc")
+ROC_curve_OCSVM = ggplot(data = data.frame(x = perf@x.values[[1]], y = perf@y.values[[1]]),aes(x = x, y = y)) + geom_line() +
+  theme(plot.title = element_text(size = 10)) +
+  geom_text(x = 0.75, y = 0.25,
+            label = paste('AUC =', round(perf.auc@y.values[[1]],4)),
+            hjust = 0.75, vjust = -1, size = 5)+
+  labs(x = NULL, y = NULL)+
+  theme_minimal()+
+  theme_minimal() +
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )  + xlab('False Positive Rate') + ylab('True Positive Rate')
+P = egg::ggarrange(ROC_curve_KPCA + ggtitle("Kernel PCA"), 
+                   ROC_curve_OCSVM + ggtitle("One-class SVM"), ncol = 2)
+ggsave(P, file = "./plots/DeepLearningFeatures/compare_3.png", width = 13.5/7*10/2, height = 3.6/7*10)
