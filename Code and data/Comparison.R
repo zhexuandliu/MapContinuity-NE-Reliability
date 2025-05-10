@@ -332,19 +332,19 @@ label = as.factor(factor(ct.X1, labels = c('Astrocytes', 'Endothelial\nCells', '
 perplexity_vec = c(10, 30, 95, 145)
 p_list = vector("list", 4)
 i=1
-filename = paste('./data/Comparison/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'.RData',sep='')
+filename = paste('./data/SingleCell/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'_Y.RData',sep='')
 load(filename)
 Y1 = Y
 i=2
-filename = paste('./data/Comparison/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'.RData',sep='')
+filename = paste('./data/SingleCell/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'_Y.RData',sep='')
 load(filename)
 Y2 = Y
 i=3
-filename = paste('./data/Comparison/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'.RData',sep='')
+filename = paste('./data/SingleCell/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'_Y.RData',sep='')
 load(filename)
 Y3 = Y
 i=4
-filename = paste('./data/Comparison/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'.RData',sep='')
+filename = paste('./data/SingleCell/small_atac_gene_activity_10geno_tsne_perplexity_',perplexity_vec[i],'_Y.RData',sep='')
 load(filename)
 Y4 = Y
 P_embedding_mouse_brain = egg::ggarrange(ggplot() +
