@@ -815,7 +815,7 @@ RSS_reduced = (dim(Y)[1]-1) * var(singularity_score)
 # F_vec = numeric(n)
 # for (i in c(1:n)){
 #   data = data.frame(y1 = Y[,1], y2 = Y[,2], score = sample(singularity_score))
-#   fit_full = loess(score ~ y1 * y2, span = 0.8, degree = 1, data = data)
+#   fit_full = loess(score ~ y1 * y2, span = 0.5, degree = 1, data = data)
 #   RSS_full = sum(fit_full$residuals**2)
 #   F_vec[i] = (RSS_reduced - RSS_full) / RSS_full
 # }
@@ -837,7 +837,7 @@ RSS_reduced = (dim(Y)[1]-1) * var(singularity_score)
 # F_vec = numeric(n)
 # for (i in c(1:n)){
 #   data = data.frame(y1 = Y[,1], y2 = Y[,2], score = sample(singularity_score))
-#   fit_full = loess(score ~ y1 * y2, span = 0.8, degree = 1, data = data)
+#   fit_full = loess(score ~ y1 * y2, span = 0.5, degree = 1, data = data)
 #   RSS_full = sum(fit_full$residuals**2)
 #   F_vec[i] = (RSS_reduced - RSS_full) / RSS_full
 # }
@@ -859,7 +859,7 @@ RSS_reduced = (dim(Y)[1]-1) * var(singularity_score)
 # F_vec = numeric(n)
 # for (i in c(1:n)){
 #   data = data.frame(y1 = Y[,1], y2 = Y[,2], score = sample(singularity_score))
-#   fit_full = loess(score ~ y1 * y2, span = 0.8, degree = 1, data = data)
+#   fit_full = loess(score ~ y1 * y2, span = 0.5, degree = 1, data = data)
 #   RSS_full = sum(fit_full$residuals**2)
 #   F_vec[i] = (RSS_reduced - RSS_full) / RSS_full
 # }
