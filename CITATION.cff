@@ -1,15 +1,22 @@
-cff-version: 1.0.0
-message: "If you use this package, please cite it as below."
-title: "Map discontinuity-based diagnosis for neighbor embedding methods"
-version: "1.1.0"
-date-released: 2025-05-11
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: >-
+  Map discontinuity-based diagnosis for neighbor embedding
+  methods
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
 authors:
-  - family-names: Liu
-    given-names: Zhexuan
-  - family-names: Ma
-    given-names: Rong
-  - family-names: Zhong
-    given-names: Yiqiao
+  - given-names: Zhexuan
+    family-names: Liu
+  - given-names: Rong
+    family-names: Ma
+  - given-names: Yiqiao
+    family-names: Zhong
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.15384394
+    value: 10.5281/zenodo.15384393
+license: MIT
