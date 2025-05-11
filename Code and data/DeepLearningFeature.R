@@ -206,6 +206,44 @@ p_dot = ggplot(data = data.frame(y = mean_1_eigen_q, x = perplexity_vec), aes(x 
   )
 ggsave(p_dot, file = './plots/DeepLearningFeatures/degree_of_FI_dicontinuity.png', width = 13.5/7*10/4, height = 3/7*10)
 
+
+my_labeller <- function(labels) {
+  return(paste("Perplexity", labels))
+}
+
+plot_mat$hh = 1
+id = (plot_mat[,4] ==5 | plot_mat[,4] ==5|plot_mat[,4] ==25|plot_mat[,4] ==100)
+id2 = (plot_mat[,3] > 50000) & id
+plot_mat$score_eigen_adj = plot_mat$score_eigen
+plot_mat$score_eigen_adj[plot_mat$score_eigen>300000] = 300000
+custom_labels <- function(x) {
+  ifelse(x >=300000, TeX('$\\geq$3e+05'), format(x))
+}
+p <- ggplot(data = plot_mat[id,], aes(x = y1, y = y2)) +
+  geom_point(data = subset(plot_mat, id2), aes(x = y1, y = y2, shape = "Special"), size = 1.25, colour="red") +
+  geom_point(aes(color = (score_eigen_adj)), size = 0.4) +  # Regular points  # Red circles
+  scale_shape_manual(values = c(Special = 1), labels = 'with severe\n FI discontinuity') +  # Define shape for "special" points, no legend title
+  scale_color_viridis(direction = 1, trans = 'log10', name = "Singularity\nScore",
+                      labels = custom_labels) +  # Color scale for eigenscore
+  facet_wrap(perplexity ~ ., nrow = 1, scales = "free", labeller = as_labeller(my_labeller)) + 
+  xlab('tSNE1') + ylab('tSNE2') +
+  guides(shape = guide_legend(title =TeX("Score$>5\\times 10^4$")))+ 
+  theme_minimal()+
+  theme(strip.text = element_text(colour = "blue", face = "bold.italic", size = 16),
+        strip.background = element_blank())+ 
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )
+ggsave(p, file = './plots/DeepLearningFeatures/compare_different_perplexity.png', width = 14.3/7*10/4*3, height = 3/7*10)
+
 ########################################
 # Compare with Kernel PCA and One-class SVM
 # Updated on May 10, 2025
