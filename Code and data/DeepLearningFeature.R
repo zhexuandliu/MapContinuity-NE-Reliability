@@ -7,6 +7,9 @@
 # CIFAR-10
 ########################################
 
+########################################
+# Perturbation score
+
 library(neMDBD)
 library(RtsneWithP)
 library(ggplot2)
@@ -152,6 +155,56 @@ ggsave(p_label, file = './plots/DeepLearningFeatures/cifar10_DTD_embedding.png',
 ggsave(p1, file = './plots/DeepLearningFeatures/cifar10_DTD_zoom1.png', width = 15, height = 4)
 ggsave(p2, file = './plots/DeepLearningFeatures/cifar10_DTD_zoom2.png', width = 15, height = 4)
 ggsave(p3, file = './plots/DeepLearningFeatures/cifar10_DTD_zoom3.png', width = 15, height = 4)
+
+########################################
+# Singularity score
+
+load(paste('./data/DeepLearningFeatures/singularity_scores/cifar10_perplexity_',100,'.RData', sep = ''))
+eigen_score_list = vector("list", length = length(perplexity_vec))
+plot_mat = data.frame(y1 = rep(0,length(perplexity_vec)*dim(Y)[1]),
+                      y2 = rep(0,length(perplexity_vec)*dim(Y)[1]),
+                      score_eigen = rep(0,length(perplexity_vec)*dim(Y)[1]),
+                      perplexity = rep(0,length(perplexity_vec)*dim(Y)[1]))
+pcol_list = vector('list', length = length(perplexity_vec))
+for (i in 1:length(perplexity_vec)){
+  perplexity = perplexity_vec[i]
+  filename = paste('./data/DeepLearningFeatures/singularity_scores/cifar10_perplexity_',perplexity,'.RData', sep = '')
+  load(filename)
+  # singularity_score = neMDBD::singularity_score_compute(Y,P)
+  eigen_score_list[[i]] = singularity_score
+  plot_mat[((i-1)*dim(Y)[1]+1):(i*dim(Y)[1]),c(1,2)] = Y
+  plot_mat[((i-1)*dim(Y)[1]+1):(i*dim(Y)[1]),3] = singularity_score
+  plot_mat[((i-1)*dim(Y)[1]+1):(i*dim(Y)[1]),4] = perplexity
+}
+
+q = 0.05
+mean_1_eigen_all = numeric(length(perplexity_vec))
+mean_1_eigen_q = numeric(length(perplexity_vec))
+for (i in 1:length(perplexity_vec)){
+  score_eigen = eigen_score_list[[i]]
+  mean_1_eigen_all[[i]] = mean(score_eigen)
+  mean_1_eigen_q[[i]] = mean(score_eigen[score_eigen>quantile(score_eigen, 1-q)])}
+p_dot = ggplot(data = data.frame(y = mean_1_eigen_q, x = perplexity_vec), aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(se = FALSE, size = 0.75, span = 0.5)+ # Plot the points
+  ggtitle('Degree of FI Discontinuity')+ theme_classic()+
+  theme(
+    panel.grid.major = element_line(color = "grey90", size = 0.5), 
+    panel.grid.minor = element_line(color = "grey95", size = 0.25) 
+  ) + ylab('Mean of top 5% singularity score') + xlab('Perplexity') + geom_point(data = data.frame(x = c(5,25,100), y = c(mean_1_eigen_q[c(1,2,5)])),aes(x = x, y = y), pch=0,size=5,colour="blue")  + geom_vline(xintercept = 100,linetype="dotted", color = "red", size=0.8)+ 
+  theme_minimal()+
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16)
+  )
+ggsave(p_dot, file = './plots/DeepLearningFeatures/degree_of_FI_dicontinuity.png', width = 13.5/7*10/4, height = 3/7*10)
 
 ########################################
 # Compare with Kernel PCA and One-class SVM
