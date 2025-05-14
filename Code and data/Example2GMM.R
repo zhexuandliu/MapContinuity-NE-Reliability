@@ -48,6 +48,62 @@ p_y = ggplot() +
   scale_color_manual(values = c('#FF1F5B','#009ADE'))
 ggsave(p_y, file = './plots/2GMM/2GMM_embedding_perplexity5.png', width = 5, height = 4)
 
+#######################################
+# OI and FI discontinuity in UMAP
+library(uwot)
+library(ggplot2)
+library(MGMM)
+
+set.seed(4)
+X = MGMM::rGMM(500, d = 2, k = 2, means = list(c(2, 0), c(-2, 0)), covs = diag(2))
+label = factor(rownames(X))
+colors <- c('#FF1F5B','#009ADE')
+p_x = ggplot() +  
+  geom_point(data = data.frame(x = X[,1], y = X[,2], label = label), 
+             aes(x=x,y=y, color=label), size = 1.2) + 
+  xlab('X1') + 
+  ylab('X2') + 
+  theme(legend.position = 'None') +
+  ggtitle('Input Space with Labels')+
+  scale_color_manual(values = colors)+ 
+  theme_minimal()+
+  scale_color_manual(values = colors,name = "Label")+
+  guides(color = guide_legend(override.aes = list(size = 2)))
+
+Y = umap(X, n_neighbors = 5)
+p_y_5 = ggplot() +  
+  geom_point(data = data.frame(x = Y[,1], y = Y[,2], label = label), 
+             aes(x=x,y=y, color=label), size = 1.2) + 
+  xlab('UMAP1') + 
+  ylab('UMAP2') + 
+  theme(legend.position = 'None') +
+  ggtitle('Number of neighbors 5') + 
+  theme_minimal()+
+  theme(
+    text = element_text(size = 16),  # Increase font size for all text elements
+    axis.title = element_text(size = 16),  # Increase font size for axis titles
+    axis.text = element_text(size = 14),  # Increase font size for axis text
+    legend.title = element_text(size = 18),  # Increase font size for legend title
+    legend.text = element_text(size = 16),  # Increase font size for legend text
+    plot.title = element_text(size = 20),  # Increase font size for plot title
+    plot.subtitle = element_text(size = 20),  # Increase font size for plot subtitle
+    plot.caption = element_text(size = 14),  # Increase font size for plot caption
+    strip.text = element_text(size = 16),
+    axis.line = element_blank(),
+    legend.position = "none"
+  ) + 
+  scale_color_manual(values = colors,name = "Label")
+
+Y = umap(X, n_neighbors = 50)
+p_y_50 = ggplot() +  
+  geom_point(data = data.frame(x = Y[,1], y = Y[,2], label = label), 
+             aes(x=x,y=y, color=label), size = 1.2) + 
+  xlab('UMAP1') + 
+  ylab('UMAP2') + 
+  theme(legend.position = 'None') +
+  ggtitle('Number of neighbors 50') + 
+  theme_minimal()+
+  scale_color_manual(values = colors,name = "Label")
 
 #######################################
 # Contour plot of LOO loss
@@ -138,3 +194,128 @@ P = egg::ggarrange(P1 + theme(legend.position = 'none') + scale_color_viridis_c(
                    P3 + theme(legend.position = 'none') + scale_color_viridis_c(limits = limit),
                    P4 + scale_color_viridis_c(limits = limit), nrow = 1)
 ggsave(P, file = './plots/2GMM/2GMM_contour_perplexity5.png', width = 20, height = 4)
+
+#######################################
+# Supplementary Fig. 2
+## a
+library(ggplot2)
+source('./data/2GMM/disconuity plot.R')
+load('./data/2GMM/2d_2GMM_perplexity5.RData')
+perplexity = 5
+mean_1 = colmeans(X[label == 1,])
+mean_2 = colmeans(X[label == 2,])
+P1 = plot_interpolate(X, perplexity, Y, mean_2, mean_1, label, 999, c(500), 1,size_all = 1.2, size_min = 7, method = 'tsne', dens = 100, thr = 100) + ggtitle(paste('Perplexity',perplexity,sep=' '))
+load('./data/2GMM/2d_2GMM_perplexity20.RData')
+perplexity = 20
+mean_1 = colmeans(X[label == 1,])
+mean_2 = colmeans(X[label == 2,])
+P2 = plot_interpolate(X, perplexity, Y, mean_2, mean_1, label, 999, c(500), 1,size_all = 1.2, size_min = 7, method = 'tsne', dens = 100, thr = 100)+ ggtitle(paste('Perplexity',perplexity,sep=' '))
+load('./data/2GMM/2d_2GMM_perplexity40.RData')
+perplexity = 40
+mean_1 = colmeans(X[label == 1,])
+mean_2 = colmeans(X[label == 2,])
+P3 = plot_interpolate(X, perplexity, Y, mean_2, mean_1, label, 999, c(500), 1,size_all = 1.2, size_min = 7, method = 'tsne', dens = 100, thr = 100)+ ggtitle(paste('Perplexity',perplexity,sep=' '))
+load('./data/2GMM/2d_2GMM_perplexity60.RData')
+perplexity = 60
+mean_1 = colmeans(X[label == 1,])
+mean_2 = colmeans(X[label == 2,])
+P4 = plot_interpolate(X, perplexity, Y, mean_2, mean_1, label, 999, c(500), 1,size_all = 1.2, size_min = 7, method = 'tsne', dens = 100, thr = 100)+ ggtitle(paste('Perplexity',perplexity,sep=' '))
+load('./data/2GMM/2d_2GMM_perplexity80.RData')
+perplexity = 80
+mean_1 = colmeans(X[label == 1,])
+mean_2 = colmeans(X[label == 2,])
+P5 = plot_interpolate(X, perplexity, Y, mean_2, mean_1, label, 999, c(500), 1,size_all = 1.2, size_min = 7, method = 'tsne', dens = 100, thr = 100)+ ggtitle(paste('Perplexity',perplexity,sep=' '))
+load('./data/2GMM/2d_2GMM_perplexity100.RData')
+perplexity = 100
+mean_1 = colmeans(X[label == 1,])
+mean_2 = colmeans(X[label == 2,])
+P6 = plot_interpolate(X, perplexity, Y, mean_2, mean_1, label, 999, c(500), 1,size_all = 1.2, size_min = 7, method = 'tsne', dens = 100, thr = 100)+ ggtitle(paste('Perplexity',perplexity,sep=' '))
+
+## b
+plot_list = vector("list", 6)
+perplexity_vec = c(5,20,40,60,80,100)
+for (i in 1:length(perplexity_vec)){
+  perplexity = perplexity_vec[i]
+  filename1 = paste('./data/2GMM/2d_2GMM_perplexity',perplexity,'.RData', sep = '')
+  filename2 = paste('./data/2GMM/coord_min_perplexity',perplexity,'.RData', sep = '')
+  load(filename1)
+  load(filename2)
+  plot_list[[i]] = ggplot(data = data.frame(x = Y[,1], y = Y[,2], label = label), aes(x=x,y=y)) + 
+    geom_point(aes(color = label), size = 0.5, alpha = 0.4)+ geom_path(data = data.frame(x = coord_min[,1], y = coord_min[,2]),aes(x= x, y = y),linetype = 'dotted', size = 0.6) + geom_point(data = data.frame(x = coord_min[,1], y = coord_min[,2]),aes(x= x, y = y), color = 'orange', size = 3, shape = 17)+
+    scale_color_manual(values = c('#FF1F5B', '#009ADE')) + 
+    xlab('tSNE1') + ylab('tSNE2') +
+    theme_minimal()+ ggtitle(paste('Perplexity',perplexity,sep=' '))
+}
+
+## c
+perplexity_vec = c(5,20,40,60,80,100)
+load('./data/2GMM/2d_2GMM_perplexity5.RData')
+eigen_score_list = vector("list", length = length(perplexity_vec))
+plot_mat = data.frame(y1 = rep(0,length(perplexity_vec)*dim(X)[1]),
+                      y2 = rep(0,length(perplexity_vec)*dim(X)[1]),
+                      score_eigen = rep(0,length(perplexity_vec)*dim(X)[1]),
+                      perplexity = rep(0,length(perplexity_vec)*dim(X)[1]),
+                      label = rep(0,dim(X)[1]*length(perplexity_vec)),
+                      bi_label = rep(0,length(perplexity_vec)*dim(X)[1]),
+                      theta = rep(0,length(perplexity_vec)*dim(X)[1]))
+pcol_list = vector('list', length = length(perplexity_vec))
+for (i in 1:length(perplexity_vec)){
+  perplexity = perplexity_vec[i]
+  filename = paste('./data/2GMM/2d_2GMM_perplexity',perplexity,'.RData',sep='')
+  load(filename)
+  singularity_score = neMDBD::singularity_score_compute(Y, P)
+  eigen_score_list[[i]] = singularity_score
+  plot_mat[((i-1)*dim(X)[1]+1):(i*dim(X)[1]),c(1)] = Y[,1]
+  plot_mat[((i-1)*dim(X)[1]+1):(i*dim(X)[1]),c(2)] = Y[,2]
+  plot_mat[((i-1)*dim(X)[1]+1):(i*dim(X)[1]),3] = singularity_score
+  plot_mat[((i-1)*dim(X)[1]+1):(i*dim(X)[1]),4] = perplexity
+  # plot_mat[((i-1)*dim(X)[1]+1):(i*dim(X)[1]),6] = (1/singularity_score > quantile(1/singularity_score, 0.95)) # binarize by quantile
+  plot_mat[((i-1)*dim(X)[1]+1):(i*dim(X)[1]),6] = (singularity_score > 3000) # binarize by threshold
+}
+options(scipen = -1)
+my_labeller <- function(labels) {
+  return(paste("Perplexity", labels))
+}
+colors <- c('#FF1F5B','#A0B1BA')
+plot_mat$bi_label <- factor(plot_mat$bi_label, levels = c('1', '0'))
+p3 <- ggplot(data = data.frame(plot_mat), aes(x = y1, y = y2, color = as.factor(bi_label))) +
+  geom_point(size = 0.8, show.legend = TRUE)  +
+  facet_wrap(~perplexity, nrow = 2, scales = "free", labeller = as_labeller(my_labeller)) +
+  xlab('tSNE1') + ylab('tSNE2') +
+  theme(strip.text = element_text(colour = "black", face = "bold"),
+        strip.background.x = element_rect(fill = "white"),
+        strip.background.y = element_rect(fill = "white"))+
+  # scale_color_manual(values = colors,name = "Label", labels = c('> 95%\nquantile', 'otherwise'))
+  scale_color_manual(values = colors,name = "Dichotomized\nSingularity\nScore", labels = c('score\n> 3000', 'otherwise')) + 
+  theme_minimal()+ 
+  guides(color = guide_legend(override.aes = list(size = 2)))
+
+#######################################
+# Supplementary Fig. 9
+load("./data/2GMM/2d_2GMM_perplexity50.RData")
+load("./data/2GMM/perturbation_score_perplexity50.RData")
+variance_scores = c(read.table("./data/2GMM/variance_scores_perplexity50.txt", header = FALSE, sep = "\t"))$V1
+df <- data.frame(x = Y[,1], y = Y[,2], color_value = variance_scores)
+
+# Plot
+p1 = ggplot(df, aes(x = x, y = y)) +
+  geom_point(aes(color = color_value), size = 1.2) +
+  scale_color_gradientn(colors = c("blue", "lightblue", "white", "lightpink", "red"),
+                        values = scales::rescale(c(0.01, 0.05, 0.08, 0.1, 0.12)/0.12*0.132),
+                        limits = c(0, 0.132))+
+  theme_minimal() +
+  theme(legend.key.height = unit(1.5, "cm")) +
+  labs(color = "variance\nscore") + 
+  ggtitle('t-SNE Embedding with scores by DynamicViz')+ xlab('tSNE1') + ylab('tSNE2')
+p2 = ggplot() +
+  geom_point(data = data.frame(
+    x = Y[, 1],
+    y = Y[, 2],
+    score = perturbation_score
+  ),
+  aes(x = x, y = y, color = score)) +
+  viridis::scale_color_viridis(direction = 1,
+                               name = "Perturbation\nScore") + 
+  ggtitle('t-SNE Embedding with Perturbation Score')+
+  xlab('tSNE1') + ylab('tSNE2')+
+  theme_minimal()
